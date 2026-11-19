@@ -159,7 +159,18 @@ h2{font-family:var(--f-display);font-weight:700;font-size:var(--s3);margin:32px 
 .why{margin-top:12px}
 .why p{margin:8px 0 0}
 
-/* Illustrationen */
+/* Illustrationen und Fotos */
+.pic{position:relative;display:block;width:100%;height:96px;overflow:hidden;background:var(--line)}
+.pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.topic .pic{border-bottom:1px solid var(--line)}
+.topic .pic,.music .pic{height:120px}
+.topic .pic .art,.music .pic .art{height:120px}
+.share-thumb .pic{height:40px}
+.guide{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px;margin:0 0 16px}
+.guide summary{font-weight:600}
+.guide .steps{margin:12px 0;padding-left:22px;display:flex;flex-direction:column;gap:8px;color:var(--ink)}
+.guide .steps li{line-height:1.45}
+.guide p{margin:8px 0 0}
 .art{display:block;width:100%;height:96px}
 .art *{stroke-linecap:round;stroke-linejoin:round}
 .ab{fill:hsl(var(--h) var(--as) var(--abl))} .a1{fill:hsl(var(--h) var(--as) var(--a1l))} .a2{fill:hsl(var(--h) var(--as) var(--a2l))}
@@ -451,11 +462,39 @@ function accept(parsed, source){
   commit(p, parsed, source); render();
   announce(`${p.accounts.length} Accounts erkannt.`);
 }
+// Liest following.json direkt aus der Export-ZIP (ohne Entpacken, alles im Browser)
+async function followingFromZip(file){
+  const buf = new Uint8Array(await file.arrayBuffer()), dv = new DataView(buf.buffer);
+  let eocd = -1;
+  for (let i = buf.length - 22; i >= Math.max(0, buf.length - 65557); i--) if (dv.getUint32(i, true) === 0x06054b50){ eocd = i; break; }
+  if (eocd < 0) throw new Error('zip');
+  const count = dv.getUint16(eocd + 10, true); let ptr = dv.getUint32(eocd + 16, true);
+  const dec = new TextDecoder();
+  for (let n = 0; n < count; n++){
+    if (dv.getUint32(ptr, true) !== 0x02014b50) throw new Error('zip');
+    const method = dv.getUint16(ptr + 10, true), csize = dv.getUint32(ptr + 20, true);
+    const nlen = dv.getUint16(ptr + 28, true), elen = dv.getUint16(ptr + 30, true), clen = dv.getUint16(ptr + 32, true), lho = dv.getUint32(ptr + 42, true);
+    const name = dec.decode(buf.subarray(ptr + 46, ptr + 46 + nlen));
+    ptr += 46 + nlen + elen + clen;
+    if (!/(^|\/)following\.json$/i.test(name)) continue;
+    const start = lho + 30 + dv.getUint16(lho + 26, true) + dv.getUint16(lho + 28, true);
+    const data = buf.subarray(start, start + csize);
+    if (method === 0) return dec.decode(data);
+    if (method === 8){ const s = new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw')); return await new Response(s).text(); }
+    throw new Error('zip');
+  }
+  return null;
+}
 async function handleFile(file){
   const p = P();
   if (!file) return;
   const ext = (file.name.split('.').pop() || '').toLowerCase();
-  if (ext === 'zip'){ p.error = 'Das ist die ZIP-Datei. Entpacke sie und nimm following.json.'; return render(); }
+  if (ext === 'zip' || file.type === 'application/zip'){
+    try { const text = await followingFromZip(file); if (!text){ p.error = 'In der ZIP-Datei fehlt following.json. Wähle beim Export „Follower und gefolgte Konten“ und das Format JSON.'; return render(); }
+      let obj; try { obj = JSON.parse(text); } catch { p.error = 'following.json ist kein JSON. Wähle beim Export das Format JSON statt HTML.'; return render(); }
+      return accept(parseJSON(obj), `Export ${file.name}`); }
+    catch { p.error = 'Die ZIP-Datei lässt sich nicht öffnen. Entpacke sie und lade following.json direkt hoch.'; return render(); }
+  }
   if (file.size > 20 * 1024 * 1024){ p.error = 'Datei zu groß. Nimm nur following.json.'; return render(); }
   let text;
   try { text = await file.text(); } catch { p.error = 'Datei lässt sich nicht öffnen. Versuch es nochmal.'; return render(); }
@@ -827,7 +866,15 @@ const ART = {
   sensibel: `${rep(8, r => rep(20, c => `<circle class="a2" cx="${8 + c * 16}" cy="${8 + r * 14}" r="1.6"/>`))}
     <rect class="aw" x="138" y="46" width="44" height="38" rx="8"/><path class="s1" d="M148 46v-8a12 12 0 0124 0v8" stroke-width="5"/><circle class="a1" cx="160" cy="64" r="5"/>`,
 };
+// Fotos liegen als bilder/<thema>.jpg neben der Seite. Fehlt ein Foto, bleibt die Illustration.
+const PHOTO_IDS = new Set(Object.keys(HUE));
 function art(id){
+  const svg = artSvg(id);
+  if (CAT[id]?.sensitive || !PHOTO_IDS.has(id)) return svg;
+  return `<div class="pic">${svg}<img data-pic src="bilder/${id}.jpg" alt="" loading="lazy" decoding="async"></div>`;
+}
+document.addEventListener('error', e => { if (e.target?.dataset && 'pic' in e.target.dataset) e.target.remove(); }, true);
+function artSvg(id){
   const key = CAT[id]?.sensitive ? 'sensibel' : id;
   const h = HUE[id] ?? 200, sat = key === 'sensibel' ? '6%' : '';
   return `<svg class="art" viewBox="0 0 320 112" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="--h:${h};${sat ? `--as:${sat}` : ''}"><rect class="ab" width="320" height="112"/>${ART[key] || ''}</svg>`;
@@ -937,6 +984,20 @@ function renderTopics(){
     ${sensBlock}${unclear}${privat}`;
 }
 
+function exportGuide(open){
+  return `<details class="guide"${open ? ' open' : ''}><summary>So holst du dir deine Liste aus Instagram</summary>
+    <p class="muted">Dauert 2 Minuten. Danach braucht Instagram meist ein paar Minuten, manchmal Stunden. Also am besten jetzt schon anfordern.</p>
+    <ol class="steps">
+      <li><b>Instagram-App öffnen</b>, auf dein Profil gehen und oben rechts das Menü ☰ antippen.</li>
+      <li><b>„Kontenübersicht“</b> öffnen, dann <b>„Deine Informationen und Berechtigungen“</b>.</li>
+      <li><b>„Deine Informationen herunterladen“</b> wählen (heißt manchmal „exportieren“), dann <b>„Informationen herunterladen oder übertragen“</b>.</li>
+      <li>Dein Instagram-Konto wählen, dann <b>„Einige deiner Informationen“</b> und nur <b>„Follower und gefolgte Konten“</b> anhaken.</li>
+      <li><b>„Auf Gerät herunterladen“</b> wählen. Zeitraum: <b>Gesamter Zeitraum</b>. Format: <b>JSON</b> (wichtig, nicht HTML). Dann <b>„Dateien erstellen“</b>.</li>
+      <li>Warten, bis Instagram dir Bescheid gibt. Dann an derselben Stelle die <b>ZIP-Datei herunterladen</b>.</li>
+      <li>Die ZIP-Datei <b>hier direkt hochladen</b>. Entpacken musst du nichts, Kiekr holt sich nur die Liste der Accounts, denen du folgst.</li>
+    </ol>
+    <p class="muted">Kein Passwort, kein Login bei Kiekr. Die Menünamen ändern sich bei Instagram ab und zu.</p></details>`;
+}
 function renderInput(){
   const p = P();
   const tab = (id, label) => `<button class="tab" role="tab" id="tab-${id}" aria-selected="${p.tab === id}" aria-controls="panel" data-tab="${id}">${label}</button>`;
@@ -944,20 +1005,11 @@ function renderInput(){
   if (p.tab === 'file') panel = `
     <label class="drop" id="drop" for="file">
       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg>
-      <p><strong>following.json auswählen</strong></p>
+      <p><strong>Export-ZIP oder following.json auswählen</strong></p>
       <p class="muted">oder hierher ziehen</p>
     </label>
-    <input type="file" id="file" class="sr" accept=".json,.html,.htm,.txt,.csv,application/json,text/plain,text/html">
-    <details>
-      <summary>Wie bekomme ich meinen Export?</summary>
-      <ol>
-        <li>Öffne in Instagram die Kontenübersicht und dort „Deine Informationen und Berechtigungen“.</li>
-        <li>Wähle „Deine Informationen herunterladen“, dann nur „Follower und gefolgte Konten“.</li>
-        <li>Stell das Format auf <strong>JSON</strong>. Der Export kommt per E-Mail, oft nach einigen Minuten.</li>
-        <li>Entpacke die ZIP-Datei und lade hier <strong>following.json</strong> hoch.</li>
-      </ol>
-      <p class="muted">Die Menünamen ändern sich bei Instagram ab und zu.</p>
-    </details>`;
+    <input type="file" id="file" class="sr" accept=".zip,.json,.html,.htm,.txt,.csv,application/zip,application/json,text/plain,text/html">
+    ${exportGuide(false)}`;
   if (p.tab === 'paste') panel = `
     <label for="paste"><strong>Usernamen einfügen</strong></label>
     <textarea id="paste" placeholder="natgeo&#10;@lonelyplanet&#10;instagram.com/a24">${esc(p.pasteText)}</textarea>
@@ -1430,6 +1482,7 @@ function renderStart(){
       <li>${ICON_LOCK}<span>Nichts wird gespeichert</span></li>
       <li>${ICON_LOCK}<span>Ihr entscheidet, was der andere sieht</span></li>
     </ul>
+    ${exportGuide(false)}
     <details class="codebox"${state.codeErr || state.codeIn ? ' open' : ''}>
       <summary>Ich habe einen Link bekommen</summary>
       <label for="codeIn" class="muted">Link oder Code einfügen</label>
@@ -1452,7 +1505,9 @@ function renderConsent(){
       <input id="city" class="search" value="${esc(state.city)}" autocomplete="off" placeholder="z. B. Leipzig"></div>` : '';
   const check = (k, text) => `<label class="check"><input type="checkbox" data-consent="${k}"${p.consent[k] ? ' checked' : ''}><span>${text}</span></label>`;
   return `
-    ${invited ? `<div class="invite-banner">${EYES}<p><strong>${esc(them)}</strong> lädt dich ein: Kiekt mal, was ihr gemeinsam habt.</p></div>` : ''}
+    ${invited ? `<div class="invite-banner">${EYES}<p><strong>${esc(them)}</strong> lädt dich ein: Kiekt mal, was ihr gemeinsam habt.</p></div>
+      <p class="muted" style="margin:-8px 0 16px">Du brauchst deine Instagram-Abos als Export. Hast du ihn noch nicht? Fordere ihn jetzt an, der Link bleibt gültig.</p>
+      ${exportGuide(true)}<div style="height:16px"></div>` : ''}
     <h1>${isA ? 'Kurz zu dir' : invited ? 'Schön, dass du da bist' : 'Jetzt du'}</h1>
     <p class="lead">${isA ? 'Danach lädst du deine Abos hoch.' : 'Danach lädst du deine eigenen Abos hoch.'}</p>
     <div class="field"><label for="myName">Dein Vorname <span class="muted">(optional)</span></label>
@@ -1517,7 +1572,7 @@ function renderInvite(){
     <p class="lead">Deine Liste ist gelöscht. Jetzt ist die andere Person dran.</p>
     <section class="choice">
       <h2>Link schicken</h2>
-      <p class="muted">Die andere Person öffnet den Link auf ihrem Handy und lädt dort ihre Abos hoch.</p>
+      <p class="muted">Die andere Person öffnet den Link auf ihrem Handy und lädt dort ihre Abos hoch. Nimm den Knopf „Link kopieren“ und öffne den Link nicht selbst.</p>
       ${link ? `<label for="linkOut" class="sr">Einladungs-Link</label><textarea id="linkOut" class="linkbox" readonly rows="3">${esc(link)}</textarea>
       <div class="row">
         <button class="btn btn-primary" type="button" id="copyLink" data-copy="${esc(link)}">Link kopieren</button>
@@ -1732,7 +1787,7 @@ document.addEventListener('click', async e => {
     case 'begin': { state.mode = 'device'; state.active = 'A'; return go('consent'); }
     case 'openCode': {
       const v = document.getElementById('codeIn').value; state.codeIn = v;
-      try { await openCode(v); clearHash(); return go(state.screen); }
+      try { await openCode(v); return go(state.screen); }
       catch (e) { state.codeErr = codeError(e); return render(); }
     }
     case 'consentNext': { p.view = 'preview'; return go('data'); }
@@ -1793,8 +1848,9 @@ function codeError(e){
 async function fromHash(){
   const h = location.hash.slice(1);
   if (!/^(einladung|antwort|ergebnis)-/.test(h)) return;
-  try { await openCode(h); } catch (e) { state = fresh(); state.codeIn = h; state.codeErr = codeError(e); }
-  clearHash(); go(state.screen);
+  try { await openCode(h); if (h.startsWith('antwort-')) clearHash(); }
+  catch (e) { state = fresh(); state.codeIn = h; state.codeErr = codeError(e); clearHash(); }
+  go(state.screen);
 }
 window.addEventListener('hashchange', fromHash);
 render(); fromHash();
