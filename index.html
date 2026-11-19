@@ -4,38 +4,48 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kiekr</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
 <style>
 /* Layout: eine schmale, linksbündige Spalte (max. 480px), Aktionen unten in der Daumenzone.
    Leitmotiv: jede Liste ist ein Kreis aus Punkten. A = gefüllte Punkte, B = Ringe. */
 :root{
-  --bg:#F3F6F5; --surface:#FFFFFF; --ink:#13201E; --ink-2:#4B5D59; --line:#D9E3E0;
-  --accent:#0E7C74; --accent-ink:#FFFFFF; --accent-soft:rgba(14,124,116,.08);
-  --danger:#B3402F; --danger-soft:rgba(179,64,47,.08);
-  --shadow:0 8px 24px rgba(14,60,56,.08);
-  --f-display:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
-  --f-body:"Figtree", "Segoe UI", system-ui, sans-serif;
+  --bg:#F5F5F7; --surface:#FFFFFF; --ink:#1D1D1F; --ink-2:#6E6E73; --line:#E5E5EA;
+  --a:#5E5CE6; --b:#3CCFB4; --b-ink:#14967F; --blend:multiply; --aura-o:.35; --vnum:#FFFFFF;
+  --accent:#5E5CE6; --accent-ink:#FFFFFF; --accent-soft:rgba(94,92,230,.10); --accent-glow:rgba(94,92,230,.55);
+  --danger:#FF3B30; --danger-soft:rgba(255,59,48,.08);
+  --fill:rgba(118,118,128,.12); --fill-strong:rgba(120,120,128,.20); --hair:rgba(60,60,67,.18); --hair-strong:rgba(60,60,67,.29);
+  --glass:rgba(245,245,247,.72); --glass-dark:rgba(30,30,32,.82);
+  --card-shadow:0 1px 2px rgba(0,0,0,.04), 0 8px 24px -12px rgba(0,0,0,.12);
+  --shadow:0 20px 40px -12px rgba(0,0,0,.25);
+  --f-display:-apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, "Segoe UI", Roboto, sans-serif;
+  --f-body:-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, sans-serif;
+  --f-round:ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif;
   --s1:13px; --s2:16px; --s3:20px; --s4:32px;
   --as:42%; --abl:90%; --a1l:32%; --a2l:72%;
   color-scheme:light;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#0E1514; --surface:#16201F; --ink:#E4EDEB; --ink-2:#9DB0AC; --line:#26332F;
-    --accent:#5FD3C3; --accent-ink:#0B1A18; --accent-soft:rgba(95,211,195,.10);
-    --danger:#F08A78; --danger-soft:rgba(240,138,120,.10);
-    --shadow:0 8px 24px rgba(0,0,0,.35);
+    --bg:#000000; --surface:#1C1C1E; --ink:#F5F5F7; --ink-2:#98989D; --line:#38383A;
+    --a:#7D7AFF; --b:#5FE0C8; --b-ink:#5FE0C8; --blend:screen; --aura-o:.45; --vnum:#0A0A1F;
+    --accent:#7D7AFF; --accent-ink:#FFFFFF; --accent-soft:rgba(125,122,255,.16); --accent-glow:rgba(125,122,255,.5);
+    --danger:#FF453A; --danger-soft:rgba(255,69,58,.12);
+    --fill:rgba(118,118,128,.24); --fill-strong:rgba(120,120,128,.36); --hair:rgba(84,84,88,.6); --hair-strong:rgba(84,84,88,.8);
+    --glass:rgba(0,0,0,.66); --glass-dark:rgba(58,58,60,.85);
+    --card-shadow:none;
+    --shadow:0 20px 40px -12px rgba(0,0,0,.6);
     --as:28%; --abl:21%; --a1l:74%; --a2l:38%;
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#0E1514; --surface:#16201F; --ink:#E4EDEB; --ink-2:#9DB0AC; --line:#26332F;
-  --accent:#5FD3C3; --accent-ink:#0B1A18; --accent-soft:rgba(95,211,195,.10);
-  --danger:#F08A78; --danger-soft:rgba(240,138,120,.10);
-  --shadow:0 8px 24px rgba(0,0,0,.35);
+  --bg:#000000; --surface:#1C1C1E; --ink:#F5F5F7; --ink-2:#98989D; --line:#38383A;
+  --a:#7D7AFF; --b:#5FE0C8; --b-ink:#5FE0C8; --blend:screen; --aura-o:.45; --vnum:#0A0A1F;
+  --accent:#7D7AFF; --accent-ink:#FFFFFF; --accent-soft:rgba(125,122,255,.16); --accent-glow:rgba(125,122,255,.5);
+  --danger:#FF453A; --danger-soft:rgba(255,69,58,.12);
+  --fill:rgba(118,118,128,.24); --fill-strong:rgba(120,120,128,.36); --hair:rgba(84,84,88,.6); --hair-strong:rgba(84,84,88,.8);
+  --glass:rgba(0,0,0,.66); --glass-dark:rgba(58,58,60,.85);
+  --card-shadow:none;
+  --shadow:0 20px 40px -12px rgba(0,0,0,.6);
   --as:28%; --abl:21%; --a1l:74%; --a2l:38%;
   color-scheme:dark;
 }
@@ -166,6 +176,13 @@ h2{font-family:var(--f-display);font-weight:700;font-size:var(--s3);margin:32px 
 .topic .pic,.music .pic{height:120px}
 .topic .pic .art,.music .pic .art{height:120px}
 .share-thumb .pic{height:40px}
+.guide-title{font-weight:700;font-family:var(--f-display);font-size:var(--s3);margin:0 0 12px}
+.export-btn{display:flex;width:100%;margin-bottom:12px}
+.pick{margin:8px 0 12px;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.note-line{margin:0 0 12px;padding:12px;border-radius:14px;background:var(--accent-soft);font-size:var(--s1);line-height:1.5}
+.guide details{border-top:1px solid var(--line);padding-top:12px}
+.waiting{background:var(--accent-soft);border:1px solid var(--accent);border-radius:20px;padding:16px;margin:0 0 20px;display:flex;flex-direction:column;gap:8px}
+.waiting p{margin:0;font-size:var(--s1);line-height:1.5}
 .guide{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px;margin:0 0 16px}
 .guide summary{font-weight:600}
 .guide .steps{margin:12px 0;padding-left:22px;display:flex;flex-direction:column;gap:8px;color:var(--ink)}
@@ -246,6 +263,7 @@ details.fold>summary small{font-family:var(--f-body);font-weight:400;font-size:v
 .choice p{margin:0}
 .linkbox{min-height:0;font-size:var(--s1);color:var(--ink-2);word-break:break-all}
 a.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:var(--ink)}
+a.btn.btn-primary{color:var(--accent-ink)}
 .handover{display:flex;flex-direction:column;align-items:flex-start;padding-top:32px}
 .pair .eyes{margin:0 0 16px;width:88px;height:53px}
 .topic-head.static{cursor:default}
@@ -338,13 +356,136 @@ h2[id]{scroll-margin-top:124px}
 .toast{position:fixed;left:50%;bottom:104px;transform:translateX(-50%);z-index:30;background:var(--ink);color:var(--bg);padding:12px 16px;border-radius:14px;font-size:var(--s1);font-weight:600;max-width:calc(100% - 32px);box-shadow:var(--shadow);animation:up .25s ease-out}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+/* ===== Apple-Look v2 =====
+   Grund: Apple-Grau / echtes Schwarz. Personen: A = Indigo, B = Mint. Die Mischfarbe entsteht nur dort, wo sich beide überlagern.
+   Systemschrift (SF Pro / Roboto), große linksbündige Titel, Glas-Leisten, gruppierte Listen, Pillen-Knöpfe. */
+body{font-size:17px;letter-spacing:-.01em;line-height:1.47}
+h1{font-size:34px;line-height:1.12;letter-spacing:-.025em;font-weight:700}
+h2{font-size:22px;letter-spacing:-.02em;font-weight:700}
+.lead{font-size:17px;color:var(--ink-2)}
+.muted{color:var(--ink-2)}
+.wrap{padding:0 20px 132px}
+
+/* Glas-Kopfzeile */
+.top{margin:0 -20px;padding:10px 20px;background:var(--glass);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:.5px solid var(--hair)}
+.brand{font-family:var(--f-round);font-size:19px;font-weight:700;letter-spacing:-.02em}
+.btn-del{border:0;background:var(--fill);min-height:36px;padding:0 14px;font-size:15px;font-weight:500}
+.btn-del svg{width:15px;height:15px}
+
+/* Knöpfe */
+.btn{border:0;background:var(--fill);border-radius:999px;min-height:50px;padding:0 22px;font-size:17px;font-weight:600;letter-spacing:-.01em;transition:transform .15s ease, filter .15s ease}
+.btn:hover{border:0;filter:brightness(.97)}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 6px 20px -6px var(--accent-glow)}
+.btn-primary:hover{filter:brightness(1.06)}
+a.btn.btn-primary{color:#fff}
+.btn-danger{background:var(--danger);color:#fff}
+.link{color:var(--accent);text-decoration:none;font-size:15px}
+.pill{border:0;background:var(--fill);min-height:36px;font-size:15px;font-weight:500;color:var(--ink)}
+.pill[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.chip{border:0;background:var(--fill);font-size:13px}
+
+/* Glas-Leiste unten */
+.dock{background:var(--glass);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-top:.5px solid var(--hair);padding:12px 20px calc(12px + env(safe-area-inset-bottom))}
+.dock .btn{min-height:50px}
+
+/* Karten und gruppierte Listen (wie iOS-Einstellungen) */
+.panel,.guide,.codebox,.choice,.seen,.claude-card,.rejected,.index-card,.hl li,.share-row,.diff,.idea,.music,.topic,.list,.acc.boxed{border:0;box-shadow:var(--card-shadow)}
+.panel,.choice,.music,.topic,.index-card{border-radius:22px}
+.guide,.codebox,.seen,.claude-card,.list,.acc.boxed{border-radius:18px}
+.list li,.acc li{border-top:.5px solid var(--hair)}
+.search,textarea{border:0;background:var(--fill);border-radius:12px;font-size:17px}
+.search{min-height:44px}
+.tabs{background:var(--fill);padding:3px;border-radius:12px;gap:2px}
+.tab{border:0;min-height:36px;border-radius:9px;font-size:14px;font-weight:600;color:var(--ink)}
+.tab[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.drop{border:1.5px dashed var(--hair-strong);border-radius:16px}
+
+/* Zustimmung als Schalter */
+.checks{background:var(--surface);border-radius:18px;box-shadow:var(--card-shadow);overflow:hidden;gap:0}
+.check{border:0;border-radius:0;background:transparent;padding:14px 16px;align-items:center;justify-content:space-between;flex-direction:row-reverse;gap:16px}
+.check + .check{border-top:.5px solid var(--hair)}
+.check:has(input:checked){border-color:transparent}
+.check input{appearance:none;-webkit-appearance:none;width:51px;height:31px;border-radius:999px;background:var(--fill-strong);position:relative;cursor:pointer;transition:background .2s;margin:0}
+.check input::after{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.2);transition:transform .2s cubic-bezier(.3,.7,.4,1)}
+.check input:checked{background:var(--b)}
+.check input:checked::after{transform:translateX(20px)}
+.switch-row{background:var(--surface);border-radius:18px;box-shadow:var(--card-shadow)}
+
+/* Freigabe: Segmente wie iOS */
+.share-list{gap:10px}
+.share-row{border-radius:18px;background:var(--surface)}
+.tri{background:var(--fill);border-radius:10px;padding:2px}
+.tri button{border-radius:8px;min-height:34px;color:var(--ink);font-weight:500}
+.tri button[aria-checked="true"]{background:var(--surface);box-shadow:0 1px 4px rgba(0,0,0,.14);font-weight:600}
+.tri button[aria-checked="true"][data-mode$=":immer"]{background:var(--accent);color:#fff}
+.tri button[aria-checked="true"][data-mode$=":aus"]{color:var(--ink-2)}
+
+/* Themenkarten */
+.topic{background:var(--surface);overflow:hidden}
+.ticon{background:var(--accent-soft);color:var(--accent);border-radius:12px}
+.seg-bar{background:var(--fill-strong)}
+.seg-bar.on{background:var(--accent)}
+.sub{border:0;background:var(--fill);color:var(--ink-2)}
+.sub.on{background:var(--accent-soft);color:var(--accent)}
+.qs li{background:var(--fill)}
+.qs li::before{color:var(--b)}
+.trend{color:var(--b-ink)}
+.acc-chips li{background:var(--fill);font-weight:500}
+.mood{background:var(--accent-soft);color:var(--accent)}
+.idea .why-line{color:var(--accent)}
+
+/* Personen-Kreise: das Markenzeichen */
+.venn .ca{fill:var(--a)} .venn .cb{fill:var(--b)}
+.venn .ca,.venn .cb{mix-blend-mode:var(--blend)}
+.eyes{width:132px;height:80px;margin:4px 0 20px;overflow:visible}
+.eyes .pupil{fill:#fff}
+.brand svg{overflow:visible}
+
+/* Start */
+.start{position:relative}
+.start h1{font-size:44px;line-height:1.04;letter-spacing:-.035em}
+.aura{position:absolute;inset:-40px -60px auto -60px;height:340px;z-index:-1;pointer-events:none;filter:blur(60px);opacity:var(--aura-o)}
+.aura i{position:absolute;width:220px;height:220px;border-radius:50%}
+.aura i:first-child{left:10%;top:20px;background:var(--a)}
+.aura i:last-child{left:42%;top:60px;background:var(--b)}
+.facts li svg{color:var(--b-ink)}
+.export-btn{min-height:50px}
+.note-line{background:var(--fill)}
+.waiting{border:0;background:var(--surface);box-shadow:var(--card-shadow)}
+.invite-banner{background:var(--surface);box-shadow:var(--card-shadow);border-radius:18px}
+.turn{background:var(--fill)}
+
+/* Ergebnis: Überlappung = Index */
+.index-card{grid-template-columns:1fr;justify-items:start;padding:20px}
+.vres{width:100%;max-width:320px;height:auto;display:block;margin:0 auto 4px;overflow:visible}
+.vres .ca{animation:inA 1.2s cubic-bezier(.2,.8,.2,1) both}
+.vres .cb{animation:inB 1.2s cubic-bezier(.2,.8,.2,1) both}
+@keyframes inA{from{transform:translateX(calc(var(--dx) * -1px))}}
+@keyframes inB{from{transform:translateX(calc(var(--dx) * 1px))}}
+.vres .num{font-family:var(--f-round);font-weight:800;font-size:46px;fill:var(--vnum);letter-spacing:-.02em}
+.vres .lbl{font-family:var(--f-round);font-size:15px;font-weight:600;fill:var(--ink-2)}
+.vres .nm{font-size:13px;font-weight:600;fill:var(--ink-2)}
+.ring-wrap{display:none}
+.hl b{font-family:var(--f-round)}
+.fa i{background:var(--a)} .fb i{border-color:var(--b);background:color-mix(in srgb,var(--b) 25%,transparent)}
+.la{background:var(--a)} .lb{border-color:var(--b);background:color-mix(in srgb,var(--b) 25%,transparent)}
+.bar i{background:linear-gradient(90deg,var(--a),var(--b))}
+.jump{margin:0 -20px;padding:8px 20px;background:var(--glass);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);top:57px}
+
+/* Bottom Sheet und Toast */
+.sheet{border-radius:22px 22px 18px 18px;padding:12px 20px 20px}
+.sheet::before{content:"";align-self:center;width:36px;height:5px;border-radius:3px;background:var(--fill-strong);margin-bottom:6px}
+.toast{background:var(--glass-dark);color:#fff;-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border-radius:999px;padding:12px 20px}
+@media (prefers-reduced-motion: reduce){.vres .ca,.vres .cb{animation:none}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="top">
     <div class="brand">
-      <svg width="28" height="20" viewBox="0 0 28 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="var(--accent)" opacity=".9"/><circle cx="18" cy="10" r="7.25" fill="none" stroke="var(--ink)" stroke-width="1.5"/></svg>
+      <svg class="venn" width="30" height="20" viewBox="0 0 30 20" aria-hidden="true"><circle class="ca" cx="10" cy="10" r="9"/><circle class="cb" cx="20" cy="10" r="9"/></svg>
       Kiekr
     </div>
     <button class="btn-del" id="delAll" type="button">
@@ -459,7 +600,7 @@ function accept(parsed, source){
   if (parsed.kind === 'followers' || parsed.kind === 'maybe-followers'){
     p.pending = { parsed, source }; p.error = null; return render();
   }
-  commit(p, parsed, source); render();
+  commit(p, parsed, source); forgetWaiting(); render();
   announce(`${p.accounts.length} Accounts erkannt.`);
 }
 // Liest following.json direkt aus der Export-ZIP (ohne Entpacken, alles im Browser)
@@ -984,19 +1125,45 @@ function renderTopics(){
     ${sensBlock}${unclear}${privat}`;
 }
 
+const EXPORT_URL = 'https://accountscenter.instagram.com/info_and_permissions/dyi/';
 function exportGuide(open){
-  return `<details class="guide"${open ? ' open' : ''}><summary>So holst du dir deine Liste aus Instagram</summary>
-    <p class="muted">Dauert 2 Minuten. Danach braucht Instagram meist ein paar Minuten, manchmal Stunden. Also am besten jetzt schon anfordern.</p>
-    <ol class="steps">
-      <li><b>Instagram-App öffnen</b>, auf dein Profil gehen und oben rechts das Menü ☰ antippen.</li>
-      <li><b>„Kontenübersicht“</b> öffnen, dann <b>„Deine Informationen und Berechtigungen“</b>.</li>
-      <li><b>„Deine Informationen herunterladen“</b> wählen (heißt manchmal „exportieren“), dann <b>„Informationen herunterladen oder übertragen“</b>.</li>
-      <li>Dein Instagram-Konto wählen, dann <b>„Einige deiner Informationen“</b> und nur <b>„Follower und gefolgte Konten“</b> anhaken.</li>
-      <li><b>„Auf Gerät herunterladen“</b> wählen. Zeitraum: <b>Gesamter Zeitraum</b>. Format: <b>JSON</b> (wichtig, nicht HTML). Dann <b>„Dateien erstellen“</b>.</li>
-      <li>Warten, bis Instagram dir Bescheid gibt. Dann an derselben Stelle die <b>ZIP-Datei herunterladen</b>.</li>
-      <li>Die ZIP-Datei <b>hier direkt hochladen</b>. Entpacken musst du nichts, Kiekr holt sich nur die Liste der Accounts, denen du folgst.</li>
-    </ol>
-    <p class="muted">Kein Passwort, kein Login bei Kiekr. Die Menünamen ändern sich bei Instagram ab und zu.</p></details>`;
+  return `<section class="guide">
+    <p class="guide-title">Deine Liste aus Instagram holen</p>
+    <a class="btn btn-primary export-btn" href="${EXPORT_URL}" target="_blank" rel="noopener" data-export>Export bei Instagram anfordern</a>
+    <p class="muted">Auf der Seite, die sich öffnet, wählst du:</p>
+    <ul class="pick">
+      <li><b>Export erstellen</b> bzw. <b>Informationen herunterladen</b>, dann dein Konto</li>
+      <li><b>Einige deiner Informationen</b>: nur <b>Follower und gefolgte Konten</b></li>
+      <li><b>Auf Gerät</b>, Zeitraum <b>Gesamter Zeitraum</b>, Format <b>JSON</b></li>
+    </ul>
+    <p class="note-line">Instagram sagt dir Bescheid, wenn die Datei fertig ist, per E-Mail oder Benachrichtigung. Meist dauert das ein paar Minuten, manchmal Stunden. Kiekr merkt sich, wo du warst. Lass den Link einfach offen.</p>
+    <details${open ? ' open' : ''}><summary>Seite geht nicht auf? Schritt für Schritt</summary>
+      <ol class="steps">
+        <li>Instagram-App öffnen, auf dein Profil gehen und oben rechts das Menü ☰ antippen.</li>
+        <li><b>„Kontenübersicht“</b> öffnen, dann <b>„Deine Informationen und Berechtigungen“</b>.</li>
+        <li><b>„Deine Informationen exportieren“</b> bzw. <b>„herunterladen“</b> wählen, dann <b>„Export erstellen“</b>.</li>
+        <li>Konto wählen, dann <b>„Einige deiner Informationen“</b> und nur <b>„Follower und gefolgte Konten“</b>.</li>
+        <li><b>„Auf Gerät exportieren“</b>, Zeitraum <b>Gesamter Zeitraum</b>, Format <b>JSON</b>, dann starten.</li>
+        <li>Wenn Instagram Bescheid gibt: an derselben Stelle die <b>ZIP-Datei herunterladen</b>. Der Download-Link gilt nur ein paar Tage.</li>
+        <li>Die ZIP-Datei hier in Kiekr hochladen. Entpacken ist nicht nötig.</li>
+      </ol>
+      <p class="muted">Die Menünamen ändern sich bei Instagram ab und zu.</p></details>
+  </section>`;
+}
+/* Merken, dass ein Export angefordert wurde (nur in diesem Browser) */
+const WKEY = 'kiekr-warten';
+function rememberWaiting(){
+  const rec = { t:Date.now(), role:state.active, name:P().name, gender:P().gender, rel:state.rel, city:state.city, invite: state.mode === 'link' && state.active === 'B' ? state.inviteCode || null : null };
+  try { localStorage.setItem(WKEY, JSON.stringify(rec)); } catch {}
+}
+function readWaiting(){ try { const r = JSON.parse(localStorage.getItem(WKEY) || 'null'); return r && Date.now() - r.t < 5 * 864e5 ? r : null; } catch { return null; } }
+function forgetWaiting(){ try { localStorage.removeItem(WKEY); } catch {} }
+const ago = t => { const m = Math.round((Date.now() - t) / 60000); return m < 2 ? 'gerade eben' : m < 60 ? `vor ${m} Minuten` : m < 1440 ? `vor ${Math.round(m / 60)} Stunden` : `vor ${Math.round(m / 1440)} Tagen`; };
+function waitingBanner(){
+  const w = readWaiting(); if (!w) return '';
+  return `<section class="waiting"><b>Willkommen zurück${w.name ? ', ' + esc(w.name) : ''}!</b>
+    <p>Du hast deinen Export ${ago(w.t)} angefordert. Ist Instagrams Nachricht schon da? Dann lade die ZIP-Datei herunter und mach hier weiter.</p>
+    <div class="row"><button class="btn btn-primary" type="button" id="resumeWait">Weitermachen</button><button class="link" type="button" id="dropWait">Neu anfangen</button></div></section>`;
 }
 function renderInput(){
   const p = P();
@@ -1227,7 +1394,7 @@ async function openCode(input){
   const d = await unpack(m[2]);
   if (m[1] === 'einladung' && d.k === 'i' && d.v === 2){
     state = fresh(); state.mode = 'link'; state.active = 'B';
-    state.remote = d; state.rel = d.r || null; state.city = d.c || '';
+    state.remote = d; state.inviteCode = s; state.rel = d.r || null; state.city = d.c || '';
     state.persons.A.name = d.n || ''; state.screen = 'consent';
   } else if (m[1] === 'antwort' && d.k === 'a' && d.v === 2){
     const sess = getSession(d.sid);
@@ -1468,12 +1635,13 @@ function dateIdeas(an, d, tone){
 }
 
 /* ---------- Screens ---------- */
-const EYES = `<svg class="eyes" viewBox="0 0 160 96" aria-hidden="true">
-  <circle cx="54" cy="48" r="40" fill="var(--accent)"/><circle cx="106" cy="48" r="38.5" fill="none" stroke="var(--ink)" stroke-width="3"/>
-  <circle class="pupil" cx="62" cy="48" r="10" fill="var(--bg)"/><circle class="pupil" cx="98" cy="48" r="10" fill="var(--ink)"/></svg>`;
+const EYES = `<svg class="eyes venn" viewBox="0 0 160 96" aria-hidden="true">
+  <circle class="ca" cx="56" cy="48" r="42"/><circle class="cb" cx="104" cy="48" r="42"/>
+  <circle class="pupil" cx="64" cy="48" r="10"/><circle class="pupil" cx="96" cy="48" r="10"/></svg>`;
 
 function renderStart(){
-  return `<section class="start">
+  return `<section class="start"><div class="aura" aria-hidden="true"><i></i><i></i></div>
+    ${waitingBanner()}
     ${EYES}
     <h1>Kiekt mal, was ihr gemeinsam habt.</h1>
     <p class="lead">Ihr ladet beide eure Instagram-Abos hoch. Kiekr zeigt euch gemeinsame Themen und Accounts – und worüber ihr reden könnt.</p>
@@ -1629,6 +1797,16 @@ function musicSection(an, d){
       <div class="seed-links">${seeds.map(q => `<a href="${spotify(q)}" target="_blank" rel="noopener">${esc(q)}</a>`).join('')}</div></div>` : ''}
   </div></section>`;
 }
+function vennIndex(idx, nA, nB){
+  const r = 70, d = Math.round(2 * r * (1 - .85 * idx / 100)), cx = 160, ax = cx - d / 2, bx = cx + d / 2;
+  const mid = idx > 8 ? cx : cx;
+  return `<svg class="vres venn" viewBox="0 0 320 190" role="img" aria-label="Gemeinsamkeits-Index ${idx} von 100">
+    <circle class="ca" cx="${ax}" cy="84" r="${r}" style="--dx:${(d / 2 + 30).toFixed(0)}"/>
+    <circle class="cb" cx="${bx}" cy="84" r="${r}" style="--dx:${(d / 2 + 30).toFixed(0)}"/>
+    <text class="num" x="${mid}" y="100" text-anchor="middle">${idx}</text>
+    <text class="nm" x="${ax - r + 6}" y="178">${esc(nA)}</text><text class="nm" x="${bx + r - 6}" y="178" text-anchor="end">${esc(nB)}</text>
+  </svg>`;
+}
 function renderResult(){
   const d = state.result, an = analysis(d), tone = toneOf(d.rel);
   const A = esc(d.nameA), B = esc(d.nameB);
@@ -1676,12 +1854,12 @@ function renderResult(){
   const jump = [['sec-themen','Themen'],an.hasMusic && ['sec-musik','Musik'],['sec-ideen','Date-Ideen'],(diffs || bridges) && ['sec-stoff','Gesprächsstoff'],an.acc.length && ['sec-acc','Accounts']].filter(Boolean)
     .map(([id, l]) => `<button type="button" class="pill" data-jump="${id}">${l}</button>`).join('');
   return `
-    <header class="res-head"><div class="pair">${EYES}</div>
+    <header class="res-head">
       <h1>${A} & ${B}</h1>
       <p class="chips-line">${d.rel ? `<span class="chip">${esc(d.rel)}</span>` : ''}${d.city ? `<span class="chip">${esc(d.city)}</span>` : ''}</p>
     </header>
     <section class="index-card">
-      <div class="ring-wrap">${ring}<div class="ring-num"><b>${an.index}</b><small>von 100</small></div></div>
+      ${vennIndex(an.index, d.nameA, d.nameB)}
       <div><h2>${indexLabel(an.index)}</h2><p class="muted">Gemeinsamkeits-Index eurer Abos. Sagt nichts darüber, ob ihr zusammenpasst.</p></div>
     </section>
     <details class="why idx"><summary>So entsteht die Zahl</summary><ul class="bars">${parts}</ul></details>
@@ -1771,6 +1949,7 @@ async function copy(text, box){
 
 /* ---------- Ereignisse ---------- */
 document.addEventListener('click', async e => {
+  if (e.target.closest('a[data-export]')){ rememberWaiting(); return; }
   const t = e.target.closest('button');
   if (!t) { if (e.target.id === 'scrim') closeSheet(); return; }
   const p = P();
@@ -1784,6 +1963,14 @@ document.addEventListener('click', async e => {
   if (t.dataset.remove){ const a = p.accounts.find(x => x.u === t.dataset.remove); a.removed = true; render(); document.getElementById('search')?.focus({preventScroll:true}); return toast(`@${a.u} entfernt`); }
   if (t.dataset.restore){ const a = p.accounts.find(x => x.u === t.dataset.restore); a.removed = false; render(); return toast(`@${a.u} zurückgeholt`); }
   switch (t.id){
+    case 'resumeWait': {
+      const w = readWaiting(); if (!w) return render();
+      if (w.invite){ try { await openCode(w.invite); } catch (err){ state.codeErr = codeError(err); return render(); } }
+      else { state.mode = 'device'; state.active = 'A'; state.rel = w.rel || null; state.city = w.city || ''; }
+      Object.assign(P(), { name: w.name || '', gender: w.gender || null, tab:'file' });
+      return go('consent');
+    }
+    case 'dropWait': { forgetWaiting(); return render(); }
     case 'begin': { state.mode = 'device'; state.active = 'A'; return go('consent'); }
     case 'openCode': {
       const v = document.getElementById('codeIn').value; state.codeIn = v;
@@ -1812,7 +1999,7 @@ document.addEventListener('click', async e => {
     case 'takeOver': { state.active = 'B'; return go('consent'); }
     case 'delAll': case 'delAll2': return openDeleteSheet();
     case 'delCancel': return closeSheet();
-    case 'delConfirm': { state = fresh(); dropAllSessions(); for (const k in ENRICH) delete ENRICH[k]; clearHash(); document.getElementById('scrim')?.remove(); go('start'); return toast('Alles gelöscht'); }
+    case 'delConfirm': { state = fresh(); dropAllSessions(); forgetWaiting(); for (const k in ENRICH) delete ENRICH[k]; clearHash(); document.getElementById('scrim')?.remove(); go('start'); return toast('Alles gelöscht'); }
   }
 });
 document.addEventListener('toggle', e => { const k = e.target.dataset?.fold; if (k){ P().folds[k] = e.target.open; const sm = e.target.querySelector('summary small'); if (sm) sm.textContent = e.target.open ? '' : 'antippen zum Ansehen'; } }, true);
